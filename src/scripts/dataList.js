@@ -13,8 +13,12 @@ let dataArray = [
   "toyota corolla",
 ];
 
-// Find elements on the pahe for us to use in the logic
+// Find elements on the page for us to use in the logic
 let carsContainerElement = document.getElementById("carsContainer");
+
+function getRandomCarImageURL() {
+  return `https://via.placeholder.com/50x50.png?text=Car`;
+}
 
 function renderData() {
   carsContainerElement.innerText = "";
@@ -24,22 +28,26 @@ function renderData() {
 
   // Do logic for each individual item in the array
   dataArray.forEach((car) => {
-    // Verify what we are working with, just log it to see the data's value
     console.log(car);
 
     // Create a new HTML element to help us format the data's value
     let newCarEntry = document.createElement("li");
-    // Add the data to the new element
-    newCarEntry.innerText += car;
 
-    // Add a button to each entry
-    // click on the button to remove the entry from the list
+    // Create an image element for each car entry
+    let carImage = document.createElement("img");
+    carImage.src = getRandomCarImageURL();
+
+    // Create a text node to display the car's name
+    let carText = document.createTextNode(car);
+
+    // Create a remove button
     let removeButton = document.createElement("button");
     removeButton.innerText = `Remove ${car}`;
-
     removeButton.onclick = () => removeCarFromDataList(car);
 
-    // Add the removeButton to the car entry
+    // Add the image and text to the car entry
+    newCarEntry.appendChild(carImage);
+    newCarEntry.appendChild(carText);
     newCarEntry.appendChild(removeButton);
 
     // Add the nicely-formatted element into the list container
@@ -51,48 +59,29 @@ function renderData() {
 }
 
 function removeCarFromDataList(targetItemToRemove) {
-  // Remove the target item from the dataArray
   dataArray = dataArray.filter((car) => car != targetItemToRemove);
-
-  // After the filtering is done, re-render the page with the "new" array
   renderData();
 }
 
 function addCarToDataList(event, targetInputId) {
-  // Find the form element
   let formElement = document.getElementById("carsInputForm");
-  
-  // Use the form element.checkValidity() method and save the result
-  let isFormvalid = formElement.checkValidity();
-  
-  // do a conditional based on that result value
-  if (!isFormvalid) {
+  let isFormValid = formElement.checkValidity();
+
+  if (!isFormValid) {
     formElement.reportValidity();
     return;
   }
 
-  // Find the form from the event
-  // prevent the form from doing its default behaviour (refreshing the page)
   event.preventDefault();
 
-  // Find the input text field based on targetInputId
   let targetTextInput = document.getElementById(targetInputId);
-
-  // Grab the string value from the text field
-  console.log(targetTextInput.value);
-
-  // Push the string value into dataArray
   dataArray.push(targetTextInput.value);
 
-  // clear the input field text
   targetTextInput.value = "";
-
-  // Focus on the text input field again to enable quick data entry!
   targetTextInput.focus();
 
   alert("Submitted a new entry: " + dataArray[dataArray.length - 1]);
 
-  // call renderData() to update the page
   renderData();
 }
 
@@ -100,3 +89,5 @@ let formInputButton = document.getElementById("formInputButton");
 formInputButton.addEventListener("click", (event) =>
   addCarToDataList(event, "carInputText")
 );
+
+renderData();
